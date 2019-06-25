@@ -1,8 +1,8 @@
 import json
 import random
 
-with open('data/kana.json') as f:
-    data = json.load(f)
+file_json = open('data/kana.json')
+data = json.loads(file_json.read())
 
 class bcolors:
     W = '\033[0m'
