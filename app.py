@@ -9,12 +9,17 @@ class bcolors:
     R = '\033[31m'
     G = '\033[32m'
 
-def input_your_kana():
-    kana = data['kana']
-    rand = random.choice(kana)
+arr = []
+kana = data['kana']
+for x in kana:
+    arr.append(x)
 
-    input_kana = input(f"Please tell me what is this? {rand['hira']}\nYou Answer: ")
-    romaji = rand['romaji']
+# randomize the arr
+random.shuffle(arr)
+
+for hira in arr:
+    input_kana = input(f"Please tell me what is this? {hira['hira']}\nYou Answer: ")
+    romaji = hira['romaji']
 
     romaji = romaji if isinstance(romaji, list) else [romaji]
     romaji = '/'.join(romaji) if romaji[0] else romaji
@@ -25,7 +30,3 @@ def input_your_kana():
         print(bcolors.G + 'You are right!' + bcolors.W)
     else:
         print(bcolors.R + f'You are wrong, the right is: {romaji}' + bcolors.W)
-
-if __name__ == "__main__":
-    while(True):
-        input_your_kana()
