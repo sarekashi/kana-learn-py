@@ -1,5 +1,4 @@
-import json
-import random
+import json, random
 
 file_json = open('data/kana.json')
 data = json.loads(file_json.read())
