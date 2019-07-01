@@ -28,7 +28,7 @@ print('=' * 50)
 def randRomaji(i):
     romaji = kana_data['kana'][i]['romaji']
     romaji = romaji if isinstance(romaji, list) else [romaji]
-    romaji = '/'.join(romaji) if romaji[0] else romaji
+    romaji = ','.join(romaji) if romaji[0] else romaji
     return romaji
 
 def randLenKana(num = 0):
@@ -43,17 +43,23 @@ for x in kana:
 
     ans1 = x['romaji']
     ans1 = ans1 if isinstance(ans1, list) else [ans1]
-    ans1 = '/'.join(ans1) if ans1[0] else ans1
+    ans1 = ','.join(ans1) if ans1[0] else ans1
 
     ans2 = randRomaji(randLenKana())
     ans3 = randRomaji(randLenKana())
-    if ans2 == ans3:
-        ans3 = randRomaji(randLenKana(1))
+    for same in range(len(kana)):
+        if ans2 == ans3:
+            ans2 = randRomaji(randLenKana(1))
+        if ans2 == ans1:
+            ans2 = randRomaji(randLenKana(1))
+        if ans3 == ans1:
+            ans3 = randRomaji(randLenKana(1))
     
     answers = [ans1, ans2, ans3]
+
     random.shuffle(answers)
 
-    kana_answer = input(f"What Romaji for this {kana_name}? {x[kana_type]} ({', '.join(answers)})\nYour Answer:(1/2/3) ")
+    kana_answer = input(f'What Romaji for this {kana_name}? {x[kana_type]} ({" / ".join(answers)})\nYour Answer:(1 / 2 / 3) ')
     if kana_answer == '1':
         if answers[0] == ans1:
             print(f'{bcolors.G}You are right!{bcolors.W}')
@@ -79,4 +85,5 @@ for x in kana:
     else:
         print(f'{bcolors.R}You are wrong, the right is: {ans1}{bcolors.W}')
 
+print('=' * 50)
 print(f'- Your total score is {bcolors.G}{score}{bcolors.W} from {bcolors.G}{kana_quiz}{bcolors.W} {kana_name}')
