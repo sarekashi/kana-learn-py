@@ -1,99 +1,117 @@
-import json, random
+from json import loads
+from random import shuffle
 
-# Open kana.json file
-jsonFile = open('data/new_kana.json')
-dataKana = json.loads(jsonFile.read())
+# Class for coloring the text
+class TextColors:
+    W = '\033[0m'
+    R = '\033[31m'
+    G = '\033[32m'
 
-kana = []; mixed = []; score = hira_quiz = 0
-# Random the list from dataKana
-basic = dataKana['kana']['basic']
-voiced = dataKana['kana']['voiced']
-combo = dataKana['kana']['combo']
+# Open the json file (kana.json)
+json_file = open('data/kana.json')
+data_kana = loads(json_file.read())
+# now get every kana set in dictionaries
+basic = data_kana['kana']['basic']
+voiced = data_kana['kana']['voiced']
+combo = data_kana['kana']['combo']
+mixed = []
+for all_sets in data_kana.get('kana').values():
+    for all_kana in all_sets:
+        mixed.append(all_kana)
 
-class bcolors:
-    W = '\033[0m'; R = '\033[31m'; G = '\033[32m'
+# Make some variables
+kana_quiz = []
+score = total_quiz = 0
 
-# Fungsi untuk memilih tipe kana (basic, voice, combo)
-def tipeKana():
-    tipeInput = input('- Please choose between Basic, Voiced, Combo, or Mixed [b/v/c/m]> ')
-    if tipeInput == 'b':
+# Function to choose Kana Type (Basic, Voiced, Combo, or Mixed)
+def kana_type():
+    input_type = input('Please choose the kana type between Basic, Voiced, Combo, or Mixed: [B|V|C|M]> ')
+    if input_type.lower() == 'b':
         return basic
-    elif tipeInput == 'v':
+    elif input_type.lower() == 'v':
         return voiced
-    elif tipeInput == 'c':
+    elif input_type.lower() == 'c':
         return combo
-    elif tipeInput == 'm':
-        for b in basic:
-            mixed.append(b)
-        for v in voiced:
-            mixed.append(v)
-        for c in combo:
-            mixed.append(c)
+    elif input_type.lower() == 'm':
         return mixed
 
-def kanaList(jenis, tipe):
-    if jenis == 'hira':
-        for x in tipe:
+def kana_list(kanaSet, kanaType):
+    if kanaSet == 'hira':
+        makeKanaList(kanaSet, kanaType)
+    elif kanaSet == 'kata':
+        makeKanaList(kanaSet, kanaType)
+    elif kanaSet == 'mix':
+        makeKanaList(kanaSet, kanaType)
+
+def makeKanaList(kanaSet, kanaType):
+    if kanaSet == 'mix':
+        for kana in kanaType:
             hiraList = {
-                'kana': x['hira'],
-                'romaji': x['romaji']
-            }
-            kana.append(hiraList)
-    elif jenis == 'kata':
-        for x in tipe:
-            kataList = {
-                'kana': x['kata'],
-                'romaji': x['romaji']
-            }
-            kana.append(kataList)
-    elif jenis == 'mix':
-        for x in tipe:
-            hiraList = {
-                'kana': x['hira'],
-                'romaji': x['romaji']
+                'kana': kana['hira'],
+                'romaji': kana['romaji']
             }
             kataList = {
-                'kana': x['kata'],
-                'romaji': x['romaji']
+                'kana': kana['kata'],
+                'romaji': kana['romaji']
             }
-            kana.append(hiraList)
-            kana.append(kataList)
+            kana_quiz.extend([hiraList, kataList])
+    else:
+        for kana in kanaType:
+            kanaList = {
+                'kana': kana[kanaSet],
+                'romaji': kana['romaji']
+            }
+            kana_quiz.append(kanaList)
 
-# Choose between Hiragana, Katakana, or Mixed
-jenisInput = input('- Please choose between Hiragana, Katakana, or Mixed [h/k/m]> ')
-if jenisInput.lower() == 'h':
-    jenisKana = 'hira'
-    tipe = tipeKana()
-    kanaList(jenisKana, tipe)
-elif jenisInput.lower() == 'k':
-    jenisKana = 'kata'
-    tipe = tipeKana()
-    kanaList(jenisKana, tipe)
-elif jenisInput.lower() == 'm':
-    jenisKana = 'mix'
-    tipe = tipeKana()
-    kanaList(jenisKana, tipe)
+# Make input for choose between Kana Set (Hiragana, Katakana, or Mixed)
+# This is will print first in console
+kanaSet = input("Please choose the kana set between Hiragana, Katakana, or Mixed: [H|K|M]> ")
+if kanaSet.lower() == 'h':
+    kana_set = 'hira'
+    tipe = kana_type()
+    kana_list(kana_set, tipe)
+elif kanaSet.lower() == 'k':
+    kana_set = 'kata'
+    tipe = kana_type()
+    kana_list(kana_set, tipe)
+elif kanaSet.lower() == 'm':
+    kana_set = 'mix'
+    tipe = kana_type()
+    kana_list(kana_set, tipe)
 
-random.shuffle(kana)
-for x in kana:
-    inputQuiz = input(f"- Please tell me what is this? {x['kana']}\nYou Answer> ")
-    hira_quiz += 1
+# now is the last, the question
+# this will print all values from kana_quiz list
+# before that, we must shuffle the list first
+shuffle(kana_quiz)
+# and now use For Loops
+for quiz in kana_quiz:
+    print(f'What romaji for this kana? {quiz["kana"]}')
+    answer = input('Answer> ')
+    # Add 1 to total_quiz for every quiz answered
+    total_quiz += 1
 
-    romaji = x['romaji']
-    romaji = romaji if isinstance(romaji, list) else [romaji]
-    romaji = ','.join(romaji) if romaji[0] else romaji
-    k_jenis = 'hiragana' if jenisKana == 'hira' else 'katakana'
-    k_jenis = 'mixed' if jenisKana == 'mix' else k_jenis
+    # Get the romaji
+    # Make all romaji become to list
+    romaji_quiz = quiz['romaji']
+    romaji_quiz = romaji_quiz if isinstance(romaji_quiz, list) else [romaji_quiz]
+    romaji_quiz = ','.join(romaji_quiz) if romaji_quiz[0] else romaji_quiz
+    # This variables is for identify what is set that used for quiz
+    k_set = 'hiragana' if kana_set == 'hira' else 'katakana'
+    k_set = 'mixed' if kana_set == 'mix' else k_set
 
-    if inputQuiz == 'exit':
+    # Compare the answer and romaji_quiz
+    # Make the exit option
+    if answer == 'exit':
         print('=' * 50)
-        print(f'- Your total score is {bcolors.G}{score}{bcolors.W} from {bcolors.G}{hira_quiz - 1}{bcolors.W} {k_jenis}')
+        print(f'Your total score is {TextColors.G}{score}{TextColors.W} from {TextColors.G}{total_quiz - 1}{TextColors.W} {k_set}')
         exit()
-    if inputQuiz in romaji:
-        print(f'{bcolors.G}You are right!{bcolors.W}')
+    if answer in romaji_quiz:
+        print(f'{TextColors.G}Correct!{TextColors.W}')
         score += 1
     else:
-        print(f'{bcolors.R}You are wrong, the right is: {romaji}{bcolors.W}')
-
+        print(f'{TextColors.R}Wrong, the correct one is {romaji_quiz}{TextColors.W}')
+    
+# Print this if all quiz has been answered
 print('=' * 50)
-print(f'Your total score is {bcolors.G}{score}{bcolors.W} from {hira_quiz} {k_jenis}')
+print(f'Your total score is {TextColors.G}{score}{TextColors.W} from {TextColors.G}{total_quiz}{TextColors.W} {k_set}')
+        
