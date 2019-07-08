@@ -1,5 +1,5 @@
 # kana-learn
-Learn Japanese directly from Discord channel
+Python app for learn Kana (Hiragana or Katakana) from Console
 
 |app.py               |app2.py              |
 :--------------------:|:--------------------:
