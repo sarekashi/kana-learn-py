@@ -83,6 +83,7 @@ elif kanaSet.lower() == 'm':
 # this will print all values from kana_quiz list
 # before that, we must shuffle the list first
 shuffle(kana_quiz)
+print('=' * 50)
 # and now use For Loops
 for quiz in kana_quiz:
     print(f'What romaji for this kana? {quiz["kana"]}')
@@ -105,12 +106,20 @@ for quiz in kana_quiz:
         print('=' * 50)
         print(f'Your total score is {TextColors.G}{score}{TextColors.W} from {TextColors.G}{total_quiz - 1}{TextColors.W} {k_set}')
         exit()
-    if answer in romaji_quiz:
+    if answer == '' or romaji_quiz.__contains__(answer) == False: 
+        # Send back the wrong quiz to list to repeat   
+        wrong = {
+            "kana": quiz["kana"],
+            "romaji": quiz['romaji']
+        }
+        kana_quiz.append(wrong)
+        print(f'{TextColors.R}Wrong, the correct one is {romaji_quiz}{TextColors.W}')
+        total_quiz -= 1
+        score -= 1
+    elif romaji_quiz.__contains__(answer):
         print(f'{TextColors.G}Correct!{TextColors.W}')
         score += 1
-    else:
-        print(f'{TextColors.R}Wrong, the correct one is {romaji_quiz}{TextColors.W}')
-    
+
 # Print this if all quiz has been answered
 print('=' * 50)
 print(f'Your total score is {TextColors.G}{score}{TextColors.W} from {TextColors.G}{total_quiz}{TextColors.W} {k_set}')
